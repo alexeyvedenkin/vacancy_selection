@@ -2,8 +2,14 @@ from abc import ABC, abstractmethod
 
 
 class BaseWorker(ABC):
-    pass
+    """ Обязывает дочерние классы реализовать методы для добавления вакансий в файл """
+
+    def file_output(self):
+        pass
 
 
 class JSONWorker(BaseWorker):
-    pass
+    """ Реализует методы для добавления вакансий в JSON-файл """
+
+    def file_output(self):
+        pass
