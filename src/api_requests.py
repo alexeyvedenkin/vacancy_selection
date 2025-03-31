@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+import json
 import requests
 
 
@@ -38,6 +39,40 @@ class RequestHeadHunter(ApiService):
             print(f"Произошла ошибка при запросе: {e}")  # Обработка ошибок
             return None  # Возвращаем None при ошибке, чтобы исключить случайный доступ к данным
 
+class SortedByCurrency:
+    """ Производит сортировку ответа от API-сервиса по валюте для выплаты зарплаты """
+    vacancy_rus = {}
+    vacancy_other = {}
+
+    def __init__(self, api_service: dict, sort_key):
+        self.api_service = api_service  # Экземпляр RequestHeadHunter
+        # self.sort_key = sort_key  # Ключ для сортировки
+
+    @classmethod
+    def country_sort(cls):
+        pass
+
+class SortedApiResult:
+    """ Производит сортировку результатов SortedByCurrency по заданному параметру """
+    def __init__(self, api_service, sort_key):
+        self.api_service = api_service  # Экземпляр RequestHeadHunter
+        self.sort_key = sort_key  # Ключ для сортировки
+
+    def get_sorted_results(self):
+        results = self.api_service.get_data()  # получение данных от RequestHeadHunter
+        if results is None or 'items' not in results:  # проверка корректности
+            return []  # возвращаем пустой список при ошибке
+
+        if not isinstance(results['items'], list):  # проверка наличия ключа 'items'
+            return []  # возвращаем пустой список при ошибке
+
+        # Filter to include only dictionaries in the sorting process
+        items_to_sort = [item for item in results['items'] if isinstance(item, dict)]
+
+        # Sort items, providing a default value (e.g., 0) for missing keys
+        return sorted(items_to_sort,
+                      key=lambda x: x.get(self.sort_key, 0))  # Sort by specified key, default to 0 if None
+
 
 if __name__ == "__main__":
     api = RequestHeadHunter()  # Создаем экземпляр класса
@@ -52,3 +87,7 @@ if __name__ == "__main__":
             print("Нет данных")  # Обработка пустого списка items
     else:
         print("Нет данных или формат ответа от API некорректный")  # Обработка других случаев
+
+    sorted_api_result = SortedApiResult(api, "salary_from")  # Убедитесь, что 'salary_from' существует в данных
+    sorted_results = sorted_api_result.get_sorted_results()
+    print(json.dumps(sorted_results, indent=2))
