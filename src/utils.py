@@ -14,8 +14,9 @@ def user_interaction():
     ranged_vacancies = get_vacancies_by_salary(filtered_vacancies, salary_range)
 
     sorted_vacancies = sort_vacancies(ranged_vacancies)
-    top_vacancies = get_top_vacancies(sorted_vacancies, top_n)
-    print_vacancies(top_vacancies)
+    # top_vacancies = get_top_vacancies(sorted_vacancies, top_n)
+
+    print(ranged_vacancies[:top_n])
 
 
 def filter_vacancies(vacancies_list, filter_words):
@@ -31,9 +32,10 @@ def get_vacancies_by_salary(filtered_vacancies, salary_range):
     return ranged_vacancies
 
 
-def sort_vacancies():
-    pass
-
+def sort_vacancies(ranged_vacancies):
+    """ Сортирует вакансии по нижнему уровню зарплаты в порядке убывания """
+    sorted_vacancies = sorted(vacancies_list, reverse=True)
+    return sorted_vacancies
 
 def get_top_vacancies():
     pass
