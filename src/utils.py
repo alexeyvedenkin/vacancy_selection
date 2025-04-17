@@ -1,5 +1,7 @@
 from src.api_service import HeadHunterAPI
+from src.file_worker import JSONWorker
 from src.vacancies import Vacancy
+
 
 def user_interaction():
     search_query = input("Введите поисковый запрос: ")
@@ -24,7 +26,9 @@ def filter_vacancies(vacancies_list, filter_words):
 
 
 def get_vacancies_by_salary(filtered_vacancies, salary_range):
-    pass
+    # Отфильтровывает вакансии по нижнему уровню зарплаты
+    ranged_vacancies = [vac for vac in filtered_vacancies if vacancy.salary_from >= salary_range]
+    return ranged_vacancies
 
 
 def sort_vacancies():
@@ -39,23 +43,23 @@ def print_vacancies():
     pass
 
 
-    # Создание экземпляра класса для работы с API сайтов с вакансиями
-    hh_api = HeadHunterAPI()
+# Создание экземпляра класса для работы с API сайтов с вакансиями
+hh_api = HeadHunterAPI()
 
-    # Получение вакансий с hh.ru в формате JSON
-    hh_vacancies = hh_api.get_vacancies("Python")
+# Получение вакансий с hh.ru в формате JSON
+hh_vacancies = hh_api.get_vacancies("Python")
 
-    # Преобразование набора данных из JSON в список объектов
-    vacancies_list = Vacancy.cast_to_object_list(hh_vacancies)
+# Преобразование набора данных из JSON в список объектов
+vacancies_list = Vacancy.cast_to_object_list(hh_vacancies)
 
-    # Пример работы контструктора класса с одной вакансией
-    vacancy = Vacancy("Python Developer", "<https://hh.ru/vacancy/123456>", "100 000-150 000 руб.",
-                      "Требования: опыт работы от 3 лет...")
+# Пример работы контструктора класса с одной вакансией
+vacancy = Vacancy("Python Developer", "<https://hh.ru/vacancy/123456>", "100 000-150 000 руб.",
+                  "Требования: опыт работы от 3 лет...")
 
-    # Сохранение информации о вакансиях в файл
-    json_saver = JSONSaver()
-    json_saver.add_vacancy(vacancy)
-    json_saver.delete_vacancy(vacancy)
+# Сохранение информации о вакансиях в файл
+json_saver = JSONWorker()
+json_saver.add_vacancy(vacancy)
+json_saver.delete_vacancy(vacancy)
 
 if __name__ == "__main__":
     user_interaction()
