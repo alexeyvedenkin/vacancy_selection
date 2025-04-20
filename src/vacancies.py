@@ -18,7 +18,7 @@ class Vacancy:
             self.salary_from = 0  # Default if salary_range is None or not a dict
             self.salary_to = 0  # Default if salary_range is None or not a dict
 
-        description = data.get('snippet', {}).get('description', 'Описание не указано')
+        description = data.get('snippet', {}).get('responsibility', 'Описание не указано')
         if description is None:
             description = 'Описание не указано'
         self.description = (description.replace('<highlighttext>', '')
@@ -34,8 +34,10 @@ class Vacancy:
         self.alternate_url = data.get('alternate_url')
 
     def __str__(self):
-        return (f'''{self.name}, зарплата от {self.salary_from}, {self.town}, {self.alternate_url}, 
-        описание вакансии: {self.description}\n, требования к вакансии: {self.requirement}\n\n''')
+        return (f"{self.name}, зарплата от {self.salary_from}, {self.town:<15}\n"
+                f"{self.alternate_url}, \n"
+                f"описание вакансии: {self.description:<100}\n"
+                f"требования к вакансии: {self.requirement:<100}\n\n")
 
     def to_dict(self):
         """ Converts the Vacancy instance to a dictionary for JSON serialization. """
