@@ -35,9 +35,13 @@ class JSONWorker(BaseWorker):
         json_file_path = os.path.join(DATA_DIR, f"{self.filename}.json")  # Путь к JSON-файлу
 
         # Проверяем, существует ли файл перед добавлением в ZIP
+        json_file_path = os.path.join(DATA_DIR, f"{self.filename}.json")  # Path to JSON file
+        zip_path = os.path.join(DATA_DIR, zip_filename)  # Use the same DATA_DIR for ZIP file
+
+        # Check if the file exists before adding to ZIP
         if os.path.exists(json_file_path):
-            with zipfile.ZipFile(zip_filename, 'a') as zip_file:  # 'a' для добавления в существующий архив
-                zip_file.write(json_file_path, arcname=f"{self.filename}.json")  # Добавляем файл в архив
-                print(f'Файл {json_file_path} добавлен в архив {zip_filename}.')
+            with zipfile.ZipFile(zip_path, 'a') as zip_file:  # 'a' to append to existing archive
+                zip_file.write(json_file_path, arcname=f"{self.filename}.json")  # Add file to archive
+                # print(f'Файл {self.filename}.json добавлен в архив {zip_path}.')
         else:
             print(f'Файл не найден: {json_file_path}')
