@@ -2,11 +2,10 @@ from src.api_service import HeadHunterAPI
 from src.file_worker import JSONWorker
 from src.vacancies import Vacancy
 import re
-import zipfile
-from config import DATA_DIR
 
 
-def user_interaction():
+def user_interaction() -> None:
+    """ Определяет процедуру взаимодействия с пользователем """
     print()
     print('Вас приветствует программа подбора вакансий с сайта hh.ru\n')
 
@@ -19,7 +18,8 @@ def user_interaction():
         print('Производится подбор вакансий, ожидайте\n')
         hh_api = HeadHunterAPI('data/vacancies.json')
         hh_api.load_vacancies(keyword)
-        vacancies_list = Vacancy.from_list(hh_api.vacancies)
+        vacancies_list = Vacancy.from_list(hh_api.get_vacancies())
+
         # Проверка на пустой список вакансий
         if len(vacancies_list) == 0:
             print('Вакансии не найдены. Попробуйте другой запрос.')
@@ -85,27 +85,27 @@ def user_interaction():
         sorted_vacancies = sort_vacancies(ranged_vacancies)
         print(*sorted_vacancies[:top_n])
 
-        print(f'Результаты подбора вакансий по запросу сохранены в архив data/{zip_filename}.zip\n')
+        print(f'Результаты подбора вакансий по запросу сохранены в архив data/{zip_filename}\n')
 
         refresh = input("Выполнить подбор вакансий по другому запросу? да/нет \n")
         if refresh.lower() not in ['1', 'д', 'да', 'y', 'yes']:
             ready = False
 
 
-def filter_vacancies(vacancies_list, filter_words):
+def filter_vacancies(vacancies_list: list, filter_words: list) -> list:
     """ Отфильтровывает вакансии, содержащие ключевые слова """
     filtered_vacancies = [vacancy for vacancy in vacancies_list if
                           any(keyword in str(vacancy) for keyword in filter_words)]
     return filtered_vacancies
 
 
-def get_vacancies_by_salary(filtered_vacancies, salary_range):
+def get_vacancies_by_salary(filtered_vacancies: list, salary_range: int) -> list:
     """ Отфильтровывает вакансии по нижнему уровню зарплаты """
     ranged_vacancies = [vac for vac in filtered_vacancies if float(vac.salary_from) >= float(salary_range)]
     return ranged_vacancies
 
 
-def sort_vacancies(ranged_vacancies):
+def sort_vacancies(ranged_vacancies: list) -> list:
     """ Сортирует вакансии по нижнему уровню зарплаты в порядке убывания """
     sorted_vacancies = sorted(ranged_vacancies, key=lambda x: float(x.salary_from), reverse=True)
     return sorted_vacancies
@@ -119,7 +119,7 @@ def print_vacancies():
     pass
 
 
-def keep_letters(input_string):
+def keep_letters(input_string: str) -> str:
     """ Исключает из запроса символы, не являющиеся буквами кириллицы или латиницы
         Для первичного запроса
     """
@@ -127,31 +127,13 @@ def keep_letters(input_string):
     return cleaned_string
 
 
-def keep_right_query(input_string):
+def keep_right_query(input_string: str) -> str:
     """ Исключает из запроса символы, не являющиеся буквами кириллицы или латиницы.
         Разрешает наличие цифровых символов в начале и конце запроса (для запроса фильтрации)
     """
     cleaned_string = re.sub(r'(?<![0-9])[^А-Яа-яЁёA-Za-z0-9]+(?![0-9])', '', input_string)
     return cleaned_string
 
-
-# # Создание экземпляра класса для работы с API сайтов с вакансиями
-# hh_api = HeadHunterAPI('data/vacancies.json')
-#
-# # Получение вакансий с hh.ru в формате JSON
-# hh_vacancies = hh_api.load_vacancies("Python")
-#
-# # Преобразование набора данных из JSON в список объектов
-# vacancies_list = Vacancy.from_list(hh_vacancies)
-
-# Пример работы конструктора класса с одной вакансией
-# vacancy = Vacancy("Python Developer", "<https://hh.ru/vacancy/123456>", "100 000-150 000 руб.",
-#                   "Требования: опыт работы от 3 лет...")
-
-# Сохранение информации о вакансиях в файл
-# json_saver = JSONWorker()
-# json_saver.add_vacancy(vacancy)
-# json_saver.delete_vacancy(vacancy)
 
 if __name__ == "__main__":
     user_interaction()

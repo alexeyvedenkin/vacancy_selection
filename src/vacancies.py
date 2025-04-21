@@ -1,60 +1,65 @@
-from src.api_service import HeadHunterAPI
+from typing import Any
 
 
 class Vacancy:
     """ Определяет параметры для использования вакансий с API-сервиса api.hh.ru """
 
-    def __init__(self, data):
-        self.vacancy_id = data.get('id')
-        self.name = data.get('name')
-        self.town = data.get('area', {}).get('name', '')
+    def __init__(self, data: dict) -> None:
+        self.__vacancy_id = data.get('id')
+        self.__name = data.get('name')
+        self.__town = data.get('area', {}).get('name', '')
 
         salary = data.get('salary')
         if isinstance(salary, dict):
-            self.salary_from = salary.get('from', 0) if isinstance(salary.get('from'), (int, float)) else 0
-            self.salary_to = salary.get('to', 0) if isinstance(salary.get('to'), (int, float)) else 0
+            self.__salary_from = salary.get('from', 0) if isinstance(salary.get('from'), (int, float)) else 0
+            self.__salary_to = salary.get('to', 0) if isinstance(salary.get('to'), (int, float)) else 0
         else:
-            self.salary_from = 0
-            self.salary_to = 0
+            self.__salary_from = 0
+            self.__salary_to = 0
 
         description = data.get('snippet', {}).get('responsibility', 'Описание не указано')
         if description is None:
             description = 'Описание не указано'
-        self.description = (description.replace('<highlighttext>', '')
+        self.__description = (description.replace('<highlighttext>', '')
                             .replace('</highlighttext>', ''))
 
-        self.alternate_url = data.get('alternate_url')
+        self.__alternate_url = data.get('alternate_url')
 
         requirement = data.get('snippet', {}).get('requirement', 'Требования не указаны')
         if requirement is None:
             requirement = 'Требования не указаны'
-        self.requirement = (requirement.replace('<highlighttext>', '')
+        self.__requirement = (requirement.replace('<highlighttext>', '')
                             .replace('</highlighttext>', ''))
-        self.alternate_url = data.get('alternate_url')
 
-    def __str__(self):
-        return (f"{self.name.strip()}, зарплата от {self.salary_from}, {self.town.strip():<15}\n"
-                f"{self.alternate_url.strip()}\n"
-                f"Описание вакансии: {self.description.strip():<100}\n"
-                f"Требования к вакансии: {self.requirement.strip():<100}\n\n")
+    def __str__(self) -> str:
+        """ Возвращает формат для вывода строкового значения вакансии"""
+        return (f"{self.__name.strip()}, зарплата от {self.__salary_from}, {self.__town.strip():<15}\n"
+                f"{self.__alternate_url.strip()}\n"
+                f"Описание вакансии: {self.__description.strip():<100}\n"
+                f"Требования к вакансии: {self.__requirement.strip():<100}\n\n")
 
-    def __gt__(self, other):
+    def __gt__(self, other: Any) -> bool:
         """ Сортирует список вакансий по ключу salary_from в порядке убывания """
-        return self.salary_from > other.salary_from
+        return self.__salary_from > other.salary_from
 
-    def to_dict(self):
-        """ Converts the Vacancy instance to a dictionary for JSON serialization. """
+    @property
+    def salary_from(self):
+        """ Разрешает доступ к атрибуту salary_from """
+        return self.__salary_from
+
+    def to_dict(self) -> dict:
+        """ Преобразует экземпляр в словарь для выгрузки в JSON """
         return {
-            'name': self.name,
-            'area': self.town,
-            'salary_from': self.salary_from,
-            'salary_to': self.salary_to,
-            'alternate.url': self.alternate_url,
-            'requirement': self.requirement,
+            'name': self.__name,
+            'area': self.__town,
+            'salary_from': self.__salary_from,
+            'salary_to': self.__salary_to,
+            'alternate.url': self.__alternate_url,
+            'requirement': self.__requirement,
         }
 
     @classmethod
-    def from_list(cls, data_list):
+    def from_list(cls, data_list: list) -> list:
         unique_vacancies = {}
         vacancies_list = []  # Формируем список вакансий, удовлетворяющих требованиям
         for data in data_list:
@@ -64,16 +69,3 @@ class Vacancy:
                     unique_vacancies[vacancy_id] = cls(data)
                     vacancies_list.append(unique_vacancies[vacancy_id])
         return vacancies_list
-
-
-if __name__ == "__main__":
-    hh_api = HeadHunterAPI('data/vacancies.json')
-    keyword = input('Введите поисковый запрос :')
-    hh_api.load_vacancies(keyword)
-    for vacancy in hh_api.vacancies:
-        print(vacancy)
-
-    vacancies_list = Vacancy.from_list(hh_api.vacancies)
-    print(len(vacancies_list))
-    for vacancy in vacancies_list:
-        print(vacancy)
