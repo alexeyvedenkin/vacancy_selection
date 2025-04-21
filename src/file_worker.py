@@ -30,18 +30,26 @@ class JSONWorker(BaseWorker):
         with open(file_path, 'w', encoding='utf-8') as file:  # Открываем файл для записи
             json.dump(data_to_save, file, ensure_ascii=False)  # Записываем данные в формате JSON
 
+    # Метод для проверки наличия архива
+    def archive_exists(self, archive_name):
+        return os.path.exists(archive_name)
+
     def add_to_zip(self, zip_filename):
         """ Метод для добавления JSON-файла в ZIP-архив """
-        json_file_path = os.path.join(DATA_DIR, f"{self.filename}.json")  # Путь к JSON-файлу
+        # Если архив существует, создаем новый с номером
+        query_counter = 1
+        archive_name = zip_filename
+        base_name = zip_filename.split('.')[0]  # Получаем базовое имя архива
+        while self.archive_exists(archive_name):
+            archive_name = f"{base_name}_{query_counter}.zip"
+            query_counter += 1
 
-        # Проверяем, существует ли файл перед добавлением в ZIP
-        json_file_path = os.path.join(DATA_DIR, f"{self.filename}.json")  # Path to JSON file
-        zip_path = os.path.join(DATA_DIR, zip_filename)  # Use the same DATA_DIR for ZIP file
+        json_file_path = os.path.join(DATA_DIR, f"{self.filename}.json")
+        zip_path = os.path.join(DATA_DIR, archive_name)
 
-        # Check if the file exists before adding to ZIP
         if os.path.exists(json_file_path):
-            with zipfile.ZipFile(zip_path, 'a') as zip_file:  # 'a' to append to existing archive
-                zip_file.write(json_file_path, arcname=f"{self.filename}.json")  # Add file to archive
+            with zipfile.ZipFile(zip_path, 'a') as zip_file:
+                zip_file.write(json_file_path, arcname=f"{self.filename}.json")
                 # print(f'Файл {self.filename}.json добавлен в архив {zip_path}.')
         else:
             print(f'Файл не найден: {json_file_path}')

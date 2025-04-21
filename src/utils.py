@@ -55,11 +55,15 @@ def user_interaction():
 
         exporter.add_to_zip(zip_filename)
 
+        print(f'Отобрано {len(filtered_vacancies)} вакансий. '
+              f'Результат выгружен в файл data/{exporter.filename}.json\n')
+
         if len(filtered_vacancies) <= 20:
             user_choice = input('Вакансий по вашему запросу немного. Вывести полный список? да/нет \n')
             if user_choice.lower() in ['1', 'д', 'да', 'y', 'yes']:
                 print(*filtered_vacancies)
         print()
+
         salary_range = input("Введите минимальный уровень зарплаты: \n")
         ranged_vacancies = get_vacancies_by_salary(filtered_vacancies, salary_range)
 
@@ -70,14 +74,18 @@ def user_interaction():
 
         print(f'На текущий момент в списке {len(ranged_vacancies)} вакансий. '
               f'Результат выгружен в файл data/{exporter.filename}.json\n')
+
         if len(ranged_vacancies) <= 20:
             user_choice = input('Вакансий по вашему запросу немного. Вывести полный список? да/нет \n')
             if user_choice.lower() in ['1', 'д', 'да', 'y', 'yes']:
                 print(*ranged_vacancies)
         print()
+
         top_n = int(input("Введите количество вакансий для вывода в топ-лист: \n"))
         sorted_vacancies = sort_vacancies(ranged_vacancies)
         print(*sorted_vacancies[:top_n])
+
+        print(f'Результаты подбора вакансий по запросу сохранены в архив data/{zip_filename}.zip\n')
 
         refresh = input("Выполнить подбор вакансий по другому запросу? да/нет \n")
         if refresh.lower() not in ['1', 'д', 'да', 'y', 'yes']:
