@@ -1,3 +1,4 @@
+from typing import Any
 from unittest.mock import patch
 
 from src.api_service import HeadHunterAPI
@@ -6,7 +7,7 @@ from src.api_service import HeadHunterAPI
 class TestHeadHunterAPI:
 
     @patch('requests.get')
-    def test_load_vacancies(self, mock_get) -> None:
+    def test_load_vacancies(self, mock_get: Any) -> None:
         # Arrange: Set up the mock response
         mock_get.return_value.json.return_value = {
             'items': [

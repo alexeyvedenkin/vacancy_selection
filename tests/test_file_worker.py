@@ -8,7 +8,7 @@ from src.file_worker import JSONWorker
 
 
 @pytest.fixture
-def json_worker():
+def json_worker() -> JSONWorker:
     """Fixture to create a JSONWorker instance for testing."""
     # Create a mock data dictionary
     mock_data = [{
@@ -23,7 +23,7 @@ def json_worker():
     return worker
 
 
-def test_file_output(json_worker) -> None:
+def test_file_output(json_worker: JSONWorker) -> None:
     """Test if the JSON file is created correctly."""
     json_worker.file_output()  # Call the method to output to file
     file_path = os.path.join(DATA_DIR, f"{json_worker.filename}.json")
@@ -38,13 +38,13 @@ def test_file_output(json_worker) -> None:
         assert data[0]['title'] == 'Software Engineer'
 
 
-def test_archive_exists(json_worker) -> None:
+def test_archive_exists(json_worker: JSONWorker) -> None:
     """Test the method for checking if an archive exists."""
     # Assuming no archives exist at this point
     assert not json_worker.archive_exists('non_existent.zip')
 
 
-def test_add_to_zip(json_worker) -> None:
+def test_add_to_zip(json_worker: JSONWorker) -> None:
     """Test adding a JSON file to a zip archive."""
     json_worker.file_output()  # Ensure the JSON file is created
     json_worker.add_to_zip('test_archive.zip')

@@ -10,7 +10,7 @@ class BaseWorker(ABC):
     """ Обязывает дочерние классы реализовать методы для добавления вакансий в файл """
 
     @abstractmethod
-    def file_output(self):
+    def file_output(self) -> None:
         pass
 
 
@@ -31,7 +31,7 @@ class JSONWorker(BaseWorker):
             json.dump(data_to_save, file, ensure_ascii=False)  # Записываем данные в формате JSON
 
     @property
-    def filename(self):
+    def filename(self) -> str:
         """ Разрешает доступ к имени файла """
         return self.__filename
 

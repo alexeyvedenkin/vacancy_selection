@@ -65,7 +65,7 @@ def user_interaction() -> None:
                 print(*filtered_vacancies)
         print()
 
-        salary_range = input("Введите минимальный уровень зарплаты: \n")
+        salary_range = int(input("Введите минимальный уровень зарплаты: \n"))
         ranged_vacancies = get_vacancies_by_salary(filtered_vacancies, salary_range)
 
         exporter = JSONWorker(ranged_vacancies, 'ranged_vacancies')
@@ -110,14 +110,6 @@ def sort_vacancies(ranged_vacancies: list) -> list:
     """ Сортирует вакансии по нижнему уровню зарплаты в порядке убывания """
     sorted_vacancies = sorted(ranged_vacancies, key=lambda x: float(x.salary_from), reverse=True)
     return sorted_vacancies
-
-
-def get_top_vacancies():
-    pass
-
-
-def print_vacancies():
-    pass
 
 
 def keep_letters(input_string: str) -> str:

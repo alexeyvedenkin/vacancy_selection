@@ -2,30 +2,30 @@ from src.utils import filter_vacancies, get_vacancies_by_salary, keep_letters, k
 from src.vacancies import Vacancy
 
 
-def test_placeholder():
+def test_placeholder() -> None:
     assert True
 
 
-def test_keep_letters():
+def test_keep_letters() -> None:
     assert keep_letters("Привет, World123!") == "ПриветWorld"
     assert keep_letters("!@#") == ""
     assert keep_letters("Hello, мир!") == "Hellомир"
 
 
-def test_keep_right_query():
+def test_keep_right_query() -> None:
     assert keep_right_query("12345 Hello 67890") == "12345Hello67890"
     assert keep_right_query("    Hello  World    ") == "HelloWorld"
     assert keep_right_query("Тест   1234") == "Тест1234"
 
 
-def test_filter_vacancies():
+def test_filter_vacancies() -> None:
     vacancies = ["Software Engineer", "Data Scientist", "Product Manager"]
     assert filter_vacancies(vacancies, ["Engineer"]) == ["Software Engineer"]
     assert filter_vacancies(vacancies, ["Manager"]) == ["Product Manager"]
     assert filter_vacancies(vacancies, ["Developer"]) == []
 
 
-def test_get_vacancies_by_salary():
+def test_get_vacancies_by_salary() -> None:
     # class Vacancy:
     #     def __init__(self, salary_from):
     #         self.salary_from = salary_from
@@ -36,7 +36,7 @@ def test_get_vacancies_by_salary():
     assert result[0].salary_from == 50000
 
 
-def test_sort_vacancies():
+def test_sort_vacancies() -> None:
     # class Vacancy:
     #     def __init__(self, salary_from):
     #         self.salary_from = salary_from

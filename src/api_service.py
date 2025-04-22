@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Any
 
 import requests
 
@@ -6,18 +7,18 @@ import requests
 class Parser(ABC):
     """ Определяет параметры классов, взаимодействующих с API-сервисами """
 
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
     @abstractmethod
-    def load_vacancies(self, *args, **kwargs):
+    def load_vacancies(self, *args, **kwargs) -> None:
         pass
 
 
 class HeadHunterAPI(Parser):
     """ Класс для работы с API HeadHunter """
 
-    def __init__(self, file_worker: str) -> None:
+    def __init__(self, file_worker: Any) -> Any:
         super().__init__()
         self.__url = 'https://api.hh.ru/vacancies'
         self.__headers = {'User-Agent': 'HH-User-Agent'}
@@ -29,7 +30,7 @@ class HeadHunterAPI(Parser):
         """ Осуществляет доступ к приватному атрибуту """
         return self.__vacancies
 
-    def load_vacancies(self, keyword: str) -> list:
+    def load_vacancies(self, keyword: Any) -> Any:
         """ Метод для загрузки вакансий с сайта api.hh.ru """
         self.__params['text'] = keyword
         while self.__params.get('page') != 20:

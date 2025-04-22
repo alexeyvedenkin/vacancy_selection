@@ -1,7 +1,7 @@
 from src.vacancies import Vacancy
 
 
-def test_vacancy_initialization():
+def test_vacancy_initialization() -> None:
     # Sample data to initialize a Vacancy
     data = {
         'id': '1',
@@ -27,7 +27,7 @@ def test_vacancy_initialization():
     )  # Test string representation
 
 
-def test_vacancy_no_salary():
+def test_vacancy_no_salary() -> None:
     # Sample data without salary information
     data = {
         'id': '2',
