@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 
-
 import requests
 
 
@@ -13,6 +12,7 @@ class Parser(ABC):
     @abstractmethod
     def load_vacancies(self, *args, **kwargs):
         pass
+
 
 class HeadHunterAPI(Parser):
     """ Класс для работы с API HeadHunter """

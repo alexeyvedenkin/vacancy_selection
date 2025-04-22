@@ -1,7 +1,8 @@
+import re
+
 from src.api_service import HeadHunterAPI
 from src.file_worker import JSONWorker
 from src.vacancies import Vacancy
-import re
 
 
 def user_interaction() -> None:
@@ -133,7 +134,3 @@ def keep_right_query(input_string: str) -> str:
     """
     cleaned_string = re.sub(r'(?<![0-9])[^А-Яа-яЁёA-Za-z0-9]+(?![0-9])', '', input_string)
     return cleaned_string
-
-
-if __name__ == "__main__":
-    user_interaction()

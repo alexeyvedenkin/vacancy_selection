@@ -1,7 +1,7 @@
 from typing import Any
 
 
-class Vacancy:
+class Vacancy():
     """ Определяет параметры для использования вакансий с API-сервиса api.hh.ru """
 
     def __init__(self, data: dict) -> None:
@@ -21,7 +21,7 @@ class Vacancy:
         if description is None:
             description = 'Описание не указано'
         self.__description = (description.replace('<highlighttext>', '')
-                            .replace('</highlighttext>', ''))
+                              .replace('</highlighttext>', ''))
 
         self.__alternate_url = data.get('alternate_url')
 
@@ -29,7 +29,7 @@ class Vacancy:
         if requirement is None:
             requirement = 'Требования не указаны'
         self.__requirement = (requirement.replace('<highlighttext>', '')
-                            .replace('</highlighttext>', ''))
+                              .replace('</highlighttext>', ''))
 
     def __str__(self) -> str:
         """ Возвращает формат для вывода строкового значения вакансии"""
