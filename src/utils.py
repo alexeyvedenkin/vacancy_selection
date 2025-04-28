@@ -12,33 +12,31 @@ def user_interaction() -> None:
 
     ready = True    # Установлен флаг для проверки необходимости выполнения функции
     while ready:
-        query = input('Введите поисковый запрос: \n').strip()
-        keyword = keep_letters(query)
-        if keyword != query:
-            print(f'Запрос "{query}" преобразован в "{keyword}"')
+        query = input('Введите интересующие вас профессии (через пробел): \n').split()
         print('Производится подбор вакансий, ожидайте\n')
-        hh_api = HeadHunterAPI('data/vacancies.json')
-        hh_api.load_vacancies(keyword)
-        vacancies_list = Vacancy.from_list(hh_api.get_vacancies())
+        all_vacancies = []
+        for elem in query:
+            keyword = keep_letters(elem).strip()
+            if keyword != elem:
+                print(f'Запрос "{elem}" преобразован в "{keyword}"')
+
+            hh_api = HeadHunterAPI('data/vacancies.json')
+            hh_api.load_vacancies(keyword)
+            vacancies = Vacancy.from_list(hh_api.get_vacancies())
+
+            all_vacancies.extend(vacancies)
 
         # Проверка на пустой список вакансий
-        if len(vacancies_list) == 0:
+        if len(all_vacancies) == 0:
             print('Вакансии не найдены. Попробуйте другой запрос.')
             continue
 
-        exporter = JSONWorker(vacancies_list, 'vacancies')
-        exporter.file_output()
+        print(f'По вашему запросу подобрано {len(all_vacancies)} вакансий.')
 
-        zip_filename = f"{keyword}.zip"
-        exporter.add_to_zip(zip_filename)
-
-        print(f'По вашему запросу подобрано {len(vacancies_list)} вакансий. '
-              f'Результат выгружен в файл data/{exporter.filename}.json\n')
-
-        if len(vacancies_list) <= 20:
+        if len(all_vacancies) <= 20:
             user_choice = input('Вакансий по вашему запросу немного. Вывести полный список? да/нет \n')
             if user_choice.lower() in ['1', 'д', 'да', 'y', 'yes']:
-                print(*vacancies_list)
+                print(*all_vacancies)
         print()
         filter_words = input("Введите ключевые слова для фильтрации вакансий (через пробел): \n").split()
         work_filter_words = []
@@ -49,15 +47,14 @@ def user_interaction() -> None:
             elif work_word != word:
                 print(f'Запрос "{word}" преобразован в "{work_word}"')
             work_filter_words.append(work_word)
-        filtered_vacancies = filter_vacancies(vacancies_list, work_filter_words)
+        filtered_vacancies = filter_vacancies(all_vacancies, work_filter_words)
 
-        exporter = JSONWorker(filtered_vacancies, 'filtered_vacancies')
-        exporter.file_output()
+        # exporter = JSONWorker(filtered_vacancies, 'filtered_vacancies')
+        # exporter.file_output()
+        #
+        # exporter.add_to_zip(zip_filename)
 
-        exporter.add_to_zip(zip_filename)
-
-        print(f'Отобрано {len(filtered_vacancies)} вакансий. '
-              f'Результат выгружен в файл data/{exporter.filename}.json\n')
+        print(f'Отобрано {len(filtered_vacancies)} вакансий.')
 
         if len(filtered_vacancies) <= 20:
             user_choice = input('Вакансий по вашему запросу немного. Вывести полный список? да/нет \n')
@@ -68,13 +65,12 @@ def user_interaction() -> None:
         salary_range = int(input("Введите минимальный уровень зарплаты: \n"))
         ranged_vacancies = get_vacancies_by_salary(filtered_vacancies, salary_range)
 
-        exporter = JSONWorker(ranged_vacancies, 'ranged_vacancies')
-        exporter.file_output()
+        # exporter = JSONWorker(ranged_vacancies, 'ranged_vacancies')
+        # exporter.file_output()
+        #
+        # exporter.add_to_zip(zip_filename)
 
-        exporter.add_to_zip(zip_filename)
-
-        print(f'На текущий момент в списке {len(ranged_vacancies)} вакансий. '
-              f'Результат выгружен в файл data/{exporter.filename}.json\n')
+        print(f'На текущий момент в списке {len(ranged_vacancies)}')
 
         if len(ranged_vacancies) <= 20:
             user_choice = input('Вакансий по вашему запросу немного. Вывести полный список? да/нет \n')
@@ -85,6 +81,12 @@ def user_interaction() -> None:
         top_n = int(input("Введите количество вакансий для вывода в топ-лист: \n"))
         sorted_vacancies = sort_vacancies(ranged_vacancies)
         print(*sorted_vacancies[:top_n])
+
+        # Выгрузка результатов в JSON
+        exporter = JSONWorker(all_vacancies, 'vacancies')
+        zip_filename = f"{'_'.join(query)}.zip"
+        exporter.file_output()
+        exporter.add_to_zip(zip_filename)
 
         print(f'Результаты подбора вакансий по запросу сохранены в архив data/{zip_filename}\n')
 

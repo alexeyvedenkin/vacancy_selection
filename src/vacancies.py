@@ -17,15 +17,15 @@ class Vacancy():
             self.__salary_from = 0
             self.__salary_to = 0
 
-        description = data.get('snippet', {}).get('responsibility', 'Описание не указано')
+        description = data.get('snippet', {}).get('responsibility', '')  # Change default to empty string
         self.__description = (description.replace('<highlighttext>', '').replace
-                              ('</highlighttext>', ''))
+                              ('</highlighttext>','')) if description else 'Описание не указано'
 
         self.__alternate_url = data.get('alternate_url')
 
-        requirement = data.get('snippet', {}).get('requirement', 'Требования не указаны')
+        requirement = data.get('snippet', {}).get('requirement', '')  # Change default to empty string
         self.__requirement = (requirement.replace('<highlighttext>', '').replace
-                              ('</highlighttext>', ''))
+                              ('</highlighttext>','')) if requirement else 'Требования не указаны'
 
     def __str__(self) -> str:
         """ Возвращает формат для вывода строкового значения вакансии"""
@@ -42,6 +42,11 @@ class Vacancy():
     def salary_from(self) -> int:
         """ Разрешает доступ к атрибуту salary_from """
         return self.__salary_from
+
+    @property
+    def description(self) -> str:
+        """ Разрешает доступ к атрибуту description """
+        return self.__description
 
     def to_dict(self) -> dict:
         """ Преобразует экземпляр в словарь для выгрузки в JSON """
