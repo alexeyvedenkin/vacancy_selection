@@ -9,7 +9,7 @@ def test_placeholder() -> None:
 def test_keep_letters() -> None:
     assert keep_letters("Привет, World123!") == "ПриветWorld"
     assert keep_letters("!@#") == ""
-    assert keep_letters("Hello, мир!") == "Hellомир"
+    assert keep_letters("Hello, мир!") == "Helloмир"
 
 
 def test_keep_right_query() -> None:
@@ -25,22 +25,14 @@ def test_filter_vacancies() -> None:
     assert filter_vacancies(vacancies, ["Developer"]) == []
 
 
-def test_get_vacancies_by_salary() -> None:
-    # class Vacancy:
-    #     def __init__(self, salary_from):
-    #         self.salary_from = salary_from
-
-    vacancies = [Vacancy(50000), Vacancy(30000), Vacancy(70000)]
+def test_get_vacancies_by_salary(vacancy1, vacancy2, vacancy3) -> None:
+    vacancies = [vacancy1, vacancy2, vacancy3]
     result = get_vacancies_by_salary(vacancies, 40000)
     assert len(result) == 2  # 2 vacancies meet the salary criteria
     assert result[0].salary_from == 50000
 
 
-def test_sort_vacancies() -> None:
-    # class Vacancy:
-    #     def __init__(self, salary_from):
-    #         self.salary_from = salary_from
-
-    vacancies = [Vacancy(30000), Vacancy(50000), Vacancy(10000)]
+def test_sort_vacancies(vacancy1, vacancy2, vacancy3) -> None:
+    vacancies = [vacancy1, vacancy2, vacancy3]
     sorted_vacancies = sort_vacancies(vacancies)
-    assert sorted_vacancies[0].salary_from == 50000
+    assert sorted_vacancies[0].salary_from == 70000

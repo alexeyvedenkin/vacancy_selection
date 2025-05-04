@@ -24,7 +24,7 @@ class JSONWorker(BaseWorker):
 
     def file_output(self) -> None:
         """Метод для экспорта данных в JSON-файл в директорию data """
-        data_to_save = [vacancy.to_dict() for vacancy in self.__data]
+        data_to_save = [vacancy for vacancy in self.__data]
         # Определяем путь к файлу
         file_path = os.path.join(DATA_DIR, f"{self.__filename}.json")  # Определяем полный путь к файлу
         with open(file_path, 'w', encoding='utf-8') as file:  # Открываем файл для записи

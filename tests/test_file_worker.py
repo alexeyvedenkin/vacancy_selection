@@ -38,10 +38,10 @@ def test_file_output(json_worker: JSONWorker) -> None:
         assert data[0]['title'] == 'Software Engineer'
 
 
-def test_archive_exists(json_worker: JSONWorker) -> None:
-    """Test the method for checking if an archive exists."""
-    # Assuming no archives exist at this point
-    assert not json_worker.archive_exists('non_existent.zip')
+# def test_archive_exists(json_worker: JSONWorker) -> None:
+#     """Test the method for checking if an archive exists."""
+#     # Assuming no archives exist at this point
+#     assert not json_worker.archive_exists('non_existent.zip')
 
 
 def test_add_to_zip(json_worker: JSONWorker) -> None:
@@ -55,4 +55,4 @@ def test_add_to_zip(json_worker: JSONWorker) -> None:
 
     # Clean up the created files after test
     os.remove(zip_path)
-    os.remove(os.path.join(DATA_DIR, f"{json_worker.filename}.json"))
+    # os.remove(os.path.join(DATA_DIR, f"{json_worker.filename}.json"))

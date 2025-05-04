@@ -44,6 +44,11 @@ class Vacancy():
         return self.__salary_from
 
     @property
+    def salary_to(self) -> int:
+        """ Разрешает доступ к атрибуту salary_to """
+        return self.__salary_to
+
+    @property
     def description(self) -> str:
         """ Разрешает доступ к атрибуту description """
         return self.__description

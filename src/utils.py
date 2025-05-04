@@ -127,4 +127,5 @@ def keep_right_query(input_string: str) -> str:
         Разрешает наличие цифровых символов в начале и конце запроса (для запроса фильтрации)
     """
     cleaned_string = re.sub(r'(?<![0-9])[^А-Яа-яЁёA-Za-z0-9]+(?![0-9])', '', input_string)
+    cleaned_string = re.sub(r'\s+', '', cleaned_string)
     return cleaned_string
