@@ -17,13 +17,13 @@ class Vacancy():
             self.__salary_from = 0
             self.__salary_to = 0
 
-        description = data.get('snippet', {}).get('responsibility', '')  # Change default to empty string
+        description = data.get('snippet', {}).get('responsibility', '')
         self.__description = (description.replace('<highlighttext>', '').replace
                               ('</highlighttext>','')) if description else 'Описание не указано'
 
         self.__alternate_url = data.get('alternate_url')
 
-        requirement = data.get('snippet', {}).get('requirement', '')  # Change default to empty string
+        requirement = data.get('snippet', {}).get('requirement', '')
         self.__requirement = (requirement.replace('<highlighttext>', '').replace
                               ('</highlighttext>','')) if requirement else 'Требования не указаны'
 

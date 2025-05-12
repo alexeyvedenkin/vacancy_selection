@@ -1,7 +1,5 @@
 import re
-import zipfile
 
-from config import DATA_DIR
 from src.api_service import HeadHunterAPI
 from src.file_worker import JSONWorker
 from src.vacancies import Vacancy
@@ -41,7 +39,7 @@ def user_interaction() -> None:
         zip_filename = f"{'_'.join(query)}.zip"
 
 
-        filter_ready = True  # Установлен флаг для проверки необходимости выполнения функции
+        filter_ready = True  # Установлен флаг для проверки необходимости выполнения фильтрации
         while filter_ready:
             filter_words = input("Введите ключевые слова для фильтрации вакансий (через пробел): \n").split()
             work_filter_words = []
@@ -127,7 +125,7 @@ def keep_letters(input_string: str) -> str:
     """
     cleaned_string = re.sub(r'(?<![0-9])[^А-Яа-яЁёA-Za-z0-9 -]+(?![0-9])', '', input_string)
     cleaned_string = re.sub(r'^[^А-Яа-яЁёA-Za-z0-9 -]+|[^А-Яа-яЁёA-Za-z0-9 -]+$', '',
-                            cleaned_string)  # Remove leading and trailing unwanted characters
+                            cleaned_string)
     return cleaned_string.strip()
 
 
