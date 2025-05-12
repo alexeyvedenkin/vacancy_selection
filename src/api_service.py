@@ -18,7 +18,7 @@ class Parser(ABC):
 class HeadHunterAPI(Parser):
     """ Класс для работы с API HeadHunter """
 
-    def __init__(self, file_worker: Any) -> Any:
+    def __init__(self, file_worker: Any) -> None:
         super().__init__()
         self.__url = 'https://api.hh.ru/vacancies'
         self.__headers = {'User-Agent': 'HH-User-Agent'}

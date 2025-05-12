@@ -5,6 +5,7 @@ import pytest
 
 from config import DATA_DIR
 from src.file_worker import JSONWorker
+from tests.conftest import vacancy1
 
 
 @pytest.fixture
@@ -23,9 +24,10 @@ def json_worker() -> JSONWorker:
     return worker
 
 
-def test_file_output(json_worker: JSONWorker) -> None:
+def test_file_output(vacancy1) -> None:
     """Test if the JSON file is created correctly."""
-    json_worker.file_output()  # Call the method to output to file
+    json_worker = JSONWorker(data=[vacancy1], filename='test_vacancy')  # Use 'test_vacancy' as a filename
+    json_worker.file_output()
     file_path = os.path.join(DATA_DIR, f"{json_worker.filename}.json")
 
     # Check if the file exists
@@ -35,7 +37,7 @@ def test_file_output(json_worker: JSONWorker) -> None:
     with open(file_path, 'r', encoding='utf-8') as file:
         data = json.load(file)
         assert len(data) == 1
-        assert data[0]['title'] == 'Software Engineer'
+        assert data[0]['name'] == 'Software Engineer'
 
 
 # def test_archive_exists(json_worker: JSONWorker) -> None:

@@ -1,5 +1,4 @@
 from src.utils import filter_vacancies, get_vacancies_by_salary, keep_letters, keep_right_query, sort_vacancies
-from src.vacancies import Vacancy
 
 
 def test_placeholder() -> None:
@@ -7,9 +6,9 @@ def test_placeholder() -> None:
 
 
 def test_keep_letters() -> None:
-    assert keep_letters("Привет, World123!") == "ПриветWorld"
+    assert keep_letters("Привет, Мир123!") == "Привет Мир123"
     assert keep_letters("!@#") == ""
-    assert keep_letters("Hello, мир!") == "Helloмир"
+    assert keep_letters("Hello,- мир!") == "Hello- мир"
 
 
 def test_keep_right_query() -> None:

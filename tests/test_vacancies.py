@@ -82,7 +82,7 @@ def test_to_dict():
         'area': 'New York',
         'salary_from': 70000,
         'salary_to': 100000,
-        'alternate.url': 'http://example.com',
+        'alternate_url': 'http://example.com',
         'requirement': 'Python, Django'
     }
 

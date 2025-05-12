@@ -1,5 +1,7 @@
 import re
+import zipfile
 
+from config import DATA_DIR
 from src.api_service import HeadHunterAPI
 from src.file_worker import JSONWorker
 from src.vacancies import Vacancy
@@ -12,7 +14,7 @@ def user_interaction() -> None:
 
     ready = True    # Установлен флаг для проверки необходимости выполнения функции
     while ready:
-        query = input('Введите интересующие вас профессии (через пробел): \n').split()
+        query = input('Введите интересующие вас профессии (через запятую): \n').split(',')
         print('Производится подбор вакансий, ожидайте\n')
         all_vacancies = []
         for elem in query:
@@ -33,10 +35,24 @@ def user_interaction() -> None:
 
         print(f'По вашему запросу подобрано {len(all_vacancies)} вакансий.')
 
-        if len(all_vacancies) <= 20:
-            user_choice = input('Вакансий по вашему запросу немного. Вывести полный список? да/нет \n')
-            if user_choice.lower() in ['1', 'д', 'да', 'y', 'yes']:
-                print(*all_vacancies)
+        print_short_list(all_vacancies)
+
+        zip_filename = f"{'_'.join(query)}.zip"
+        exporter = JSONWorker(all_vacancies, 'vacancies')
+        exporter.file_output()
+        exporter.add_to_zip(zip_filename)
+        #
+        # # Создаем пустой ZIP-архив
+        # with zipfile.ZipFile(zip_filename, 'a') as zip_file:
+        #     exporter = JSONWorker(all_vacancies, 'vacancies')
+        #     exporter.file_output()
+        #     exporter.add_to_zip(zip_filename)
+
+        # if len(all_vacancies) <= 20:
+        #     user_choice = input('Вакансий по вашему запросу немного. Вывести полный список? да/нет \n')
+        #     if user_choice.lower() in ['1', 'д', 'да', 'y', 'yes']:
+        #         print(*all_vacancies)
+
         print()
         filter_words = input("Введите ключевые слова для фильтрации вакансий (через пробел): \n").split()
         work_filter_words = []
@@ -49,33 +65,25 @@ def user_interaction() -> None:
             work_filter_words.append(work_word)
         filtered_vacancies = filter_vacancies(all_vacancies, work_filter_words)
 
-        # exporter = JSONWorker(filtered_vacancies, 'filtered_vacancies')
-        # exporter.file_output()
-        #
-        # exporter.add_to_zip(zip_filename)
-
         print(f'Отобрано {len(filtered_vacancies)} вакансий.')
 
-        if len(filtered_vacancies) <= 20:
-            user_choice = input('Вакансий по вашему запросу немного. Вывести полный список? да/нет \n')
-            if user_choice.lower() in ['1', 'д', 'да', 'y', 'yes']:
-                print(*filtered_vacancies)
+        print_short_list(filtered_vacancies)
+        # if len(filtered_vacancies) <= 20:
+        #     user_choice = input('Вакансий по вашему запросу немного. Вывести полный список? да/нет \n')
+        #     if user_choice.lower() in ['1', 'д', 'да', 'y', 'yes']:
+        #         print(*filtered_vacancies)
         print()
 
         salary_range = int(input("Введите минимальный уровень зарплаты: \n"))
         ranged_vacancies = get_vacancies_by_salary(filtered_vacancies, salary_range)
 
-        # exporter = JSONWorker(ranged_vacancies, 'ranged_vacancies')
-        # exporter.file_output()
-        #
-        # exporter.add_to_zip(zip_filename)
+        print(f'На текущий момент в списке {len(ranged_vacancies)} вакансий')
 
-        print(f'На текущий момент в списке {len(ranged_vacancies)}')
-
-        if len(ranged_vacancies) <= 20:
-            user_choice = input('Вакансий по вашему запросу немного. Вывести полный список? да/нет \n')
-            if user_choice.lower() in ['1', 'д', 'да', 'y', 'yes']:
-                print(*ranged_vacancies)
+        print_short_list(ranged_vacancies)
+        # if len(ranged_vacancies) <= 20:
+        #     user_choice = input('Вакансий по вашему запросу немного. Вывести полный список? да/нет \n')
+        #     if user_choice.lower() in ['1', 'д', 'да', 'y', 'yes']:
+        #         print(*ranged_vacancies)
         print()
 
         top_n = int(input("Введите количество вакансий для вывода в топ-лист: \n"))
@@ -83,10 +91,10 @@ def user_interaction() -> None:
         print(*sorted_vacancies[:top_n])
 
         # Выгрузка результатов в JSON
-        exporter = JSONWorker(all_vacancies, 'vacancies')
+        # exporter = JSONWorker(all_vacancies, 'vacancies')
         zip_filename = f"{'_'.join(query)}.zip"
-        exporter.file_output()
-        exporter.add_to_zip(zip_filename)
+        # exporter.file_output()
+        # exporter.add_to_zip(zip_filename)
 
         print(f'Результаты подбора вакансий по запросу сохранены в архив data/{zip_filename}\n')
 
@@ -115,11 +123,14 @@ def sort_vacancies(ranged_vacancies: list) -> list:
 
 
 def keep_letters(input_string: str) -> str:
-    """ Исключает из запроса символы, не являющиеся буквами кириллицы или латиницы
+    """ Исключает из запроса символы, не являющиеся буквами кириллицы или латиницы.
+        Допускает наличие цифровых символов в начале и конце запроса, пробелов и дефисов внутри строки.
         Для первичного запроса
     """
-    cleaned_string = ''.join(re.findall(r'[А-Яа-яЁёA-Za-z]', input_string))
-    return cleaned_string
+    cleaned_string = re.sub(r'(?<![0-9])[^А-Яа-яЁёA-Za-z0-9 -]+(?![0-9])', '', input_string)
+    cleaned_string = re.sub(r'^[^А-Яа-яЁёA-Za-z0-9 -]+|[^А-Яа-яЁёA-Za-z0-9 -]+$', '',
+                            cleaned_string)  # Remove leading and trailing unwanted characters
+    return cleaned_string.strip()
 
 
 def keep_right_query(input_string: str) -> str:
@@ -129,3 +140,10 @@ def keep_right_query(input_string: str) -> str:
     cleaned_string = re.sub(r'(?<![0-9])[^А-Яа-яЁёA-Za-z0-9]+(?![0-9])', '', input_string)
     cleaned_string = re.sub(r'\s+', '', cleaned_string)
     return cleaned_string
+
+
+def print_short_list(my_list:list) -> None:
+    if len(my_list) <= 20:
+        user_choice = input('Вакансий по вашему запросу немного. Вывести полный список? да/нет \n')
+        if user_choice.lower() in ['1', 'д', 'да', 'y', 'yes']:
+            print(*my_list)

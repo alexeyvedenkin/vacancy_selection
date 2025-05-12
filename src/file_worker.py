@@ -24,7 +24,13 @@ class JSONWorker(BaseWorker):
 
     def file_output(self) -> None:
         """Метод для экспорта данных в JSON-файл в директорию data """
-        data_to_save = [vacancy for vacancy in self.__data]
+
+        # Проверяем, являются ли элементы словарями
+        if all(isinstance(vacancy, dict) for vacancy in self.__data):
+            data_to_save = self.__data  # Используем данные прямо, если это словари
+        else:
+            data_to_save = [vacancy.to_dict() for vacancy in self.__data]  # Для объектов с to_dict()
+
         # Определяем путь к файлу
         file_path = os.path.join(DATA_DIR, f"{self.__filename}.json")  # Определяем полный путь к файлу
         with open(file_path, 'w', encoding='utf-8') as file:  # Открываем файл для записи
@@ -35,12 +41,12 @@ class JSONWorker(BaseWorker):
         """ Разрешает доступ к имени файла """
         return self.__filename
 
-    # @staticmethod
-    # def archive_exists(archive_name: str) -> bool:
-    #     """ Метод для проверки наличия архива """
-    #     full_path = os.path.join(DATA_DIR, archive_name)
-    #     # print(f"Проверяем существование архива: {archive_name}")
-    #     return os.path.exists(full_path)
+    @staticmethod
+    def archive_exists(archive_name: str) -> bool:
+        """ Метод для проверки наличия архива """
+        full_path = os.path.join(DATA_DIR, archive_name)
+        # print(f"Проверяем существование архива: {archive_name}")
+        return os.path.exists(full_path)
 
     def add_to_zip(self, zip_filename: str) -> None:
         """ Метод для добавления JSON-файла в ZIP-архив """
@@ -49,10 +55,10 @@ class JSONWorker(BaseWorker):
         archive_name = zip_filename
         query_counter = 1
 
-        # # Генерируем новое имя, если архив существует
-        # while self.archive_exists(archive_name):
-        #     archive_name = f"{base_name}_{query_counter}.zip"  # Генерируем новое имя
-        #     query_counter += 1  # Увеличиваем счётчик
+        # Генерируем новое имя, если архив существует
+        if self.archive_exists(archive_name):
+            archive_name = f"{base_name}_{query_counter}.zip"  # Генерируем новое имя
+            query_counter += 1  # Увеличиваем счётчик
 
         json_file_path = os.path.join(DATA_DIR, f"{self.__filename}.json")
         zip_path = os.path.join(DATA_DIR, archive_name)  # Используем обновлённое имя архива

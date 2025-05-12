@@ -60,7 +60,7 @@ class Vacancy():
             'area': self.__town,
             'salary_from': self.__salary_from,
             'salary_to': self.__salary_to,
-            'alternate.url': self.__alternate_url,
+            'alternate_url': self.__alternate_url,
             'requirement': self.__requirement,
         }
 
