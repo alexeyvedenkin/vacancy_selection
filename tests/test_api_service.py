@@ -8,18 +8,15 @@ from src.api_service import HeadHunterAPI
 #
 @patch('requests.get')
 def test_load_vacancies(mock_get: Any) -> None:
-    # Arrange: Set up the mock response
     mock_get.return_value.json.return_value = {
         'items': [
             {'name': 'Python Developer', 'id': 1},
             {'name': 'Java Developer', 'id': 2}
         ]
     }
-    api = HeadHunterAPI('dummy_file_path')  # You can provide any dummy file path as needed
+    api = HeadHunterAPI('dummy_file_path')
 
-    # Act: Call the method you want to test
     vacancies = api.load_vacancies('Python')
 
-    # Assert: Check if we got the expected result
-    assert len(vacancies) == 20  # We expect one vacancy that matched
-    assert vacancies[0]['name'] == 'Python Developer'  # Check if the right name is returned
+    assert len(vacancies) == 20
+    assert vacancies[0]['name'] == 'Python Developer'

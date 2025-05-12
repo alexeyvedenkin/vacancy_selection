@@ -38,7 +38,6 @@ def user_interaction() -> None:
         # Создание zip-архива для сохранения результатов
         zip_filename = f"{'_'.join(query)}.zip"
 
-
         filter_ready = True  # Установлен флаг для проверки необходимости выполнения фильтрации
         while filter_ready:
             filter_words = input("Введите ключевые слова для фильтрации вакансий (через пробел): \n").split()
@@ -138,7 +137,7 @@ def keep_right_query(input_string: str) -> str:
     return cleaned_string
 
 
-def print_short_list(my_list:list) -> None:
+def print_short_list(my_list: list) -> None:
     if len(my_list) <= 20:
         user_choice = input('Вакансий по вашему запросу немного. Вывести полный список? да/нет \n')
         if user_choice.lower() in ['1', 'д', 'да', 'y', 'yes']:

@@ -19,13 +19,13 @@ class Vacancy():
 
         description = data.get('snippet', {}).get('responsibility', '')
         self.__description = (description.replace('<highlighttext>', '').replace
-                              ('</highlighttext>','')) if description else 'Описание не указано'
+                              ('</highlighttext>', '')) if description else 'Описание не указано'
 
         self.__alternate_url = data.get('alternate_url')
 
         requirement = data.get('snippet', {}).get('requirement', '')
         self.__requirement = (requirement.replace('<highlighttext>', '').replace
-                              ('</highlighttext>','')) if requirement else 'Требования не указаны'
+                              ('</highlighttext>', '')) if requirement else 'Требования не указаны'
 
     def __str__(self) -> str:
         """ Возвращает формат для вывода строкового значения вакансии"""

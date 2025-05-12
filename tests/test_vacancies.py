@@ -2,7 +2,6 @@ from src.vacancies import Vacancy
 
 
 def test_vacancy_initialization() -> None:
-    # Sample data to initialize a Vacancy
     data = {
         'id': '1',
         'name': 'Software Engineer',
@@ -15,20 +14,14 @@ def test_vacancy_initialization() -> None:
         'alternate_url': 'https://example.com/vacancy/1'
     }
 
-    vacancy = Vacancy(data)  # Create an instance of Vacancy
+    vacancy = Vacancy(data)
 
-    assert vacancy.salary_from == 70000  # Test salary_from
-    assert vacancy.salary_to == 90000  # Test salary_to
-    # assert vacancy.__str__() == (
-    #     "Software Engineer, зарплата от 70000, New York\n"
-    #     "https://example.com/vacancy/1\n"
-    #     "Описание вакансии: Develop applications\n"
-    #     "Требования к вакансии: Python skills\n\n"
-    # )  # Test string representation
+    assert vacancy.salary_from == 70000
+    assert vacancy.salary_to == 90000
 
 
 def test_vacancy_no_salary() -> None:
-    # Sample data without salary information
+    # Данные без указания зарплаты
     data = {
         'id': '2',
         'name': 'Data Analyst',
@@ -45,7 +38,7 @@ def test_vacancy_no_salary() -> None:
     assert vacancy.salary_to == 0  # Test default salary_to
 
 
-def test_description_with_valid_data():
+def test_description_with_valid_data() -> None:
     data = {
         'id': 1,
         'name': 'Software Engineer',
@@ -57,13 +50,13 @@ def test_description_with_valid_data():
     assert vacancy.description == 'Develop software'
 
 
-def test_description_with_empty_data():
+def test_description_with_empty_data() -> None:
     data = {}
     vacancy = Vacancy(data)
     assert vacancy.description == 'Описание не указано'
 
 
-def test_to_dict():
+def test_to_dict() -> None:
     data = {
         'id': 1,
         'name': 'Software Engineer',

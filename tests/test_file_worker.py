@@ -5,7 +5,6 @@ import pytest
 
 from config import DATA_DIR
 from src.file_worker import JSONWorker
-from tests.conftest import vacancy1
 
 
 @pytest.fixture
@@ -30,31 +29,20 @@ def test_file_output(vacancy1) -> None:
     json_worker.file_output()
     file_path = os.path.join(DATA_DIR, f"{json_worker.filename}.json")
 
-    # Check if the file exists
     assert os.path.exists(file_path)
 
-    # Check if the content of the file is correct
     with open(file_path, 'r', encoding='utf-8') as file:
         data = json.load(file)
         assert len(data) == 1
         assert data[0]['name'] == 'Software Engineer'
 
 
-# def test_archive_exists(json_worker: JSONWorker) -> None:
-#     """Test the method for checking if an archive exists."""
-#     # Assuming no archives exist at this point
-#     assert not json_worker.archive_exists('non_existent.zip')
-
-
 def test_add_to_zip(json_worker: JSONWorker) -> None:
-    """Test adding a JSON file to a zip archive."""
-    json_worker.file_output()  # Ensure the JSON file is created
+    """ Проверяет добавление JSON-файла в zip-архив """
+    json_worker.file_output()
     json_worker.add_to_zip('test_archive.zip')
 
-    # Check if the zip file is created
     zip_path = os.path.join(DATA_DIR, 'test_archive.zip')
     assert os.path.exists(zip_path)
 
-    # Clean up the created files after test
     os.remove(zip_path)
-    # os.remove(os.path.join(DATA_DIR, f"{json_worker.filename}.json"))
