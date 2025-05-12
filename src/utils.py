@@ -37,64 +37,62 @@ def user_interaction() -> None:
 
         print_short_list(all_vacancies)
 
+        # Создание zip-архива для сохранения результатов
         zip_filename = f"{'_'.join(query)}.zip"
+
+
+        filter_ready = True  # Установлен флаг для проверки необходимости выполнения функции
+        while filter_ready:
+            filter_words = input("Введите ключевые слова для фильтрации вакансий (через пробел): \n").split()
+            work_filter_words = []
+            for word in filter_words:
+                work_word = keep_right_query(word)
+                if not work_word:
+                    print(f'Запрос "{word}" не может быть обработан')
+                elif work_word != word:
+                    print(f'Запрос "{word}" преобразован в "{work_word}"')
+                work_filter_words.append(work_word)
+            filtered_vacancies = filter_vacancies(all_vacancies, work_filter_words)
+
+            print(f'Отобрано {len(filtered_vacancies)} вакансий.')
+
+            # Запись данных в zip-архив
+            exp_filename = '_'.join(work_filter_words)
+            exporter = JSONWorker(filtered_vacancies, exp_filename)
+            exporter.file_output()
+            exporter.add_to_zip(zip_filename)
+
+            print_short_list(filtered_vacancies)
+
+            print()
+
+            salary_range = int(input("Введите минимальный уровень зарплаты: \n"))
+            ranged_vacancies = get_vacancies_by_salary(filtered_vacancies, salary_range)
+
+            # Запись данных в zip-архив
+            rang_filename = f'ranged_{exp_filename}'
+            exporter = JSONWorker(ranged_vacancies, rang_filename)
+            exporter.file_output()
+            exporter.add_to_zip(zip_filename)
+
+            print(f'На текущий момент в списке {len(ranged_vacancies)} вакансий')
+
+            print_short_list(ranged_vacancies)
+            print()
+
+            top_n = int(input("Введите количество вакансий для вывода в топ-лист: \n"))
+            sorted_vacancies = sort_vacancies(ranged_vacancies)
+            print(*sorted_vacancies[:top_n])
+
+            refresh = input("Выполнить фильтрацию вакансий по другим словам? да/нет \n")
+            if refresh.lower() not in ['1', 'д', 'да', 'y', 'yes']:
+                filter_ready = False
+
+        # Запись данных в zip-архив
         exporter = JSONWorker(all_vacancies, 'vacancies')
         exporter.file_output()
         exporter.add_to_zip(zip_filename)
-        #
-        # # Создаем пустой ZIP-архив
-        # with zipfile.ZipFile(zip_filename, 'a') as zip_file:
-        #     exporter = JSONWorker(all_vacancies, 'vacancies')
-        #     exporter.file_output()
-        #     exporter.add_to_zip(zip_filename)
-
-        # if len(all_vacancies) <= 20:
-        #     user_choice = input('Вакансий по вашему запросу немного. Вывести полный список? да/нет \n')
-        #     if user_choice.lower() in ['1', 'д', 'да', 'y', 'yes']:
-        #         print(*all_vacancies)
-
         print()
-        filter_words = input("Введите ключевые слова для фильтрации вакансий (через пробел): \n").split()
-        work_filter_words = []
-        for word in filter_words:
-            work_word = keep_right_query(word)
-            if not work_word:
-                print(f'Запрос "{word}" не может быть обработан')
-            elif work_word != word:
-                print(f'Запрос "{word}" преобразован в "{work_word}"')
-            work_filter_words.append(work_word)
-        filtered_vacancies = filter_vacancies(all_vacancies, work_filter_words)
-
-        print(f'Отобрано {len(filtered_vacancies)} вакансий.')
-
-        print_short_list(filtered_vacancies)
-        # if len(filtered_vacancies) <= 20:
-        #     user_choice = input('Вакансий по вашему запросу немного. Вывести полный список? да/нет \n')
-        #     if user_choice.lower() in ['1', 'д', 'да', 'y', 'yes']:
-        #         print(*filtered_vacancies)
-        print()
-
-        salary_range = int(input("Введите минимальный уровень зарплаты: \n"))
-        ranged_vacancies = get_vacancies_by_salary(filtered_vacancies, salary_range)
-
-        print(f'На текущий момент в списке {len(ranged_vacancies)} вакансий')
-
-        print_short_list(ranged_vacancies)
-        # if len(ranged_vacancies) <= 20:
-        #     user_choice = input('Вакансий по вашему запросу немного. Вывести полный список? да/нет \n')
-        #     if user_choice.lower() in ['1', 'д', 'да', 'y', 'yes']:
-        #         print(*ranged_vacancies)
-        print()
-
-        top_n = int(input("Введите количество вакансий для вывода в топ-лист: \n"))
-        sorted_vacancies = sort_vacancies(ranged_vacancies)
-        print(*sorted_vacancies[:top_n])
-
-        # Выгрузка результатов в JSON
-        # exporter = JSONWorker(all_vacancies, 'vacancies')
-        zip_filename = f"{'_'.join(query)}.zip"
-        # exporter.file_output()
-        # exporter.add_to_zip(zip_filename)
 
         print(f'Результаты подбора вакансий по запросу сохранены в архив data/{zip_filename}\n')
 
